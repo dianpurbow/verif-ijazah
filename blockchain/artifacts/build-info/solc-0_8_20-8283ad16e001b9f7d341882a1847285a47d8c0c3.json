@@ -1,0 +1,42 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_20-8283ad16e001b9f7d341882a1847285a47d8c0c3",
+  "solcVersion": "0.8.20",
+  "solcLongVersion": "0.8.20+commit.a1b79de6",
+  "compilerType": "solc",
+  "userSourceNameMap": {
+    "contracts/DegreeVerification.sol": "project/contracts/DegreeVerification.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "shanghai",
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode.linkReferences",
+            "evm.bytecode.object",
+            "evm.bytecode.opcodes",
+            "evm.bytecode.sourceMap",
+            "evm.deployedBytecode.immutableReferences",
+            "evm.deployedBytecode.linkReferences",
+            "evm.deployedBytecode.object",
+            "evm.deployedBytecode.opcodes",
+            "evm.deployedBytecode.sourceMap",
+            "evm.methodIdentifiers"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/DegreeVerification.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\n\ncontract DegreeVerification {\n    address public admin;\n\n    // Mapping to store valid degree hashes\n    mapping(string => bool) public validDegrees;\n\n    // Mapping to store timestamp when a degree was issued\n    mapping(string => uint256) public issueDate;\n\n    // Event emitted when a new degree is added\n    event DegreeAdded(string degreeHash, uint256 timestamp);\n\n    modifier onlyAdmin() {\n        require(msg.sender == admin, \"Only admin can perform this action\");\n        _;\n    }\n\n    constructor() {\n        admin = msg.sender;\n    }\n\n    /**\n     * @dev Add a new degree hash to the blockchain\n     * @param _hash The SHA-256 hash of the degree data\n     */\n    function addDegree(string memory _hash) public onlyAdmin {\n        require(!validDegrees[_hash], \"Degree already exists\");\n        \n        validDegrees[_hash] = true;\n        issueDate[_hash] = block.timestamp;\n        \n        emit DegreeAdded(_hash, block.timestamp);\n    }\n\n    /**\n     * @dev Verify if a degree hash exists on the blockchain\n     * @param _hash The SHA-256 hash of the degree data to verify\n     * @return bool True if valid, false otherwise\n     * @return uint256 The timestamp when it was issued (0 if not valid)\n     */\n    function verifyDegree(string memory _hash) public view returns (bool, uint256) {\n        return (validDegrees[_hash], issueDate[_hash]);\n    }\n}\n"
+      }
+    }
+  }
+}
